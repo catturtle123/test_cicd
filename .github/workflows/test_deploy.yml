@@ -83,7 +83,7 @@ jobs:
             # Perform health check
             echo "Performing health check on the new container..."
             HEALTH_CHECK_URL="http://127.0.0.1:8080/health"
-            for i in {1..5}; do
+            for i in {1..10}; do
               HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $HEALTH_CHECK_URL)
               if [ "$HEALTH_STATUS" == "200" ]; then
                 echo "Health check passed. New container is healthy."
@@ -100,7 +100,7 @@ jobs:
                 exit 0
               fi
               echo "Health check failed. Retrying in 5 seconds... ($i/30)"
-              sleep 3
+              sleep 4
             done
   
             # If health check failed
