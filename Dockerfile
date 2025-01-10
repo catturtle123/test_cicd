@@ -8,7 +8,7 @@ ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} qa_studio_dev.jar
 
 ## 환경 변수 설정 (필요시 기본값으로 develop 지정)
-ENV SPRING_PROFILES_ACTIVE=develop
+ENV SPRING_PROFILES_ACTIVE=default
 
 # 엔트리포인트 설정
 ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-jar", "/qa_studio_dev.jar"]
