@@ -30,7 +30,7 @@ jobs:
       - name: Generate resources folder
         run: mkdir -p ./src/main/resources
 
-      - name: Set up application-database.yml
+      - name: Set up application.yml
         run: echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application.yml
 
       - name: Grant execute permission for gradlew
@@ -63,6 +63,9 @@ jobs:
           port: 22
           key: ${{ env.PRIVATE_KEY }}
           script: |
+            TIMESTAMP=$(date +"%Y%m%d%H%M%S")
+            NEW_CONTAINER_NAME="${{ env.CONTAINER_NAME }}_$TIMESTAMP"
+            
             # Check for running container on port 8080
             CONTAINER_ID=$(sudo docker ps -q --filter "publish=8080")
             
@@ -78,12 +81,12 @@ jobs:
             
             # Run the new container
             echo "Starting new container: ${{ env.CONTAINER_NAME }}"
-            sudo docker run --name ${{ env.CONTAINER_NAME }}_new -d -p 8080:8080 -e TZ=Asia/Seoul ${{ env.DOCKER_IMAGE_NAME }}
+            sudo docker run --name $NEW_CONTAINER_NAME -d -p 8080:8080 -e TZ=Asia/Seoul ${{ env.DOCKER_IMAGE_NAME }}
             
             # Perform health check
             echo "Performing health check on the new container..."
             HEALTH_CHECK_URL="http://127.0.0.1:8080/health"
-            for i in {1..10}; do
+            for i in {1..30}; do
               HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $HEALTH_CHECK_URL)
               if [ "$HEALTH_STATUS" == "200" ]; then
                 echo "Health check passed. New container is healthy."
@@ -100,14 +103,14 @@ jobs:
                 exit 0
               fi
               echo "Health check failed. Retrying in 5 seconds... ($i/30)"
-              sleep 4
+              sleep 5
             done
-  
+            
             # If health check failed
             if [ "$HEALTH_STATUS" != "200" ]; then
               echo "Health check failed after multiple attempts. Restarting old container."
-              sudo docker stop ${{ env.CONTAINER_NAME }}_new
-              sudo docker rm ${{ env.CONTAINER_NAME }}_new
+              sudo docker stop $NEW_CONTAINER_NAME
+              sudo docker rm $NEW_CONTAINER_NAME
               if [ ! -z "$CONTAINER_ID" ]; then
                 echo "Restarting old container: $CONTAINER_ID"
                 sudo docker start $CONTAINER_ID
