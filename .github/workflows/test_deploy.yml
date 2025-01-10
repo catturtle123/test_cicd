@@ -75,7 +75,7 @@ jobs:
               sudo docker stop $CONTAINER_ID
             fi
             
-            # Pull the latest image from Docker Hub
+            # Pull the latest image from Docker Hubs
             echo "Pulling latest image: ${{ env.DOCKER_IMAGE_NAME }}"
             sudo docker pull ${{ env.DOCKER_IMAGE_NAME }}
             
