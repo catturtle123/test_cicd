@@ -115,5 +115,10 @@ jobs:
                 echo "Restarting old container: $CONTAINER_ID"
                 sudo docker start $CONTAINER_ID
               fi
+              LATEST_IMAGE_ID=$(sudo docker images ${{ env.DOCKER_IMAGE_NAME }}:latest -q)
+              if [ ! -z "$LATEST_IMAGE_ID" ]; then
+                echo "Removing latest image: $LATEST_IMAGE_ID"
+                sudo docker rmi $LATEST_IMAGE_ID
+              fi
               exit 1
             fi
