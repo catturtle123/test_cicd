@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "헬스 체킹 Controllers")
 public class HealthController {
 
-    @GetMapping("/health")
+    @GetMapping("/healths")
     public String health() {
         return "I'm healthy!";
     }
