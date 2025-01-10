@@ -11,4 +11,4 @@ COPY ${JAR_FILE} qa_studio_dev.jar
 #ENV SPRING_PROFILES_ACTIVE=develop
 
 # 엔트리포인트 설정
-ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-jar", "/qa_studio_dev.jar"]
+ENTRYPOINT ["java", "-jar", "/qa_studio_dev.jar"]
